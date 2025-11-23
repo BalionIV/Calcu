@@ -3,6 +3,29 @@
 #include <math.h>
 #include <stdbool.h>
 
+bool check_base(char *sn, int base) {
+
+	for(int i = 0; i < strlen(sn); i++) {
+		if(((sn[i] >= 'A') &&  (sn[i] - 'A' + 10 >= base)) || ((sn[i] <= '9') && (sn[i] - '0' >= base))) {
+			printf("Base incorrect.\n");
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+int ask_base() {
+	int base;
+
+	do {
+		printf("Enter the base: ");
+		scanf("%d", &base);	
+	} while(base < 2 || base > 16);
+
+	return base;
+} 
+
 void from_decimal(int n, int base) {
 	int f = n, cpt = 0;
 	char converted[256];
@@ -33,12 +56,11 @@ void to_decimal(char *sn, int base) {
 
 	int n = 0, c = strlen(sn) - 1;
 
-	for(int i = 0; i < strlen(sn); i++) {
-		if(((sn[i] >= 'A') &&  (sn[i] - 'A' + 10 >= base)) || ((sn[i] <= '9') && (sn[i] - '0' >= base))) {
-			printf("Base incorrect.\n");
+	if(!check_base(sn, base)) {
 			return;
-		}
+	}
 
+	for(int i = 0; i < strlen(sn); i++) {
 		if(sn[i] >= 'A') n += (sn[i] - 'A' + 10) * pow(base, c);
 		else n += (sn[i] - '0') * pow(base, c);
 	}
@@ -49,7 +71,7 @@ void to_decimal(char *sn, int base) {
 int main() {
 
 	int number, base, option;
-	char snumber[256];
+	char snumber1[256], snumber2[256], resultat[256];
 
 	do {
 		printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal. \n3- Exit.\n");
@@ -57,10 +79,7 @@ int main() {
 
 		switch(option) {
 		case 1:
-			do {
-				printf("Enter base (2 to 16) to convert to: ");
-				scanf("%d", &base);
-			} while(base < 2 || base > 16 || base == 10);
+			base = ask_base();
 
 			printf("Enter number to convert to base %d: ", base);
 			scanf("%d", &number);
@@ -69,15 +88,12 @@ int main() {
 			break;
 
 		case 2:
-			do {
-				printf("Enter base (2 to 16) to convert from: ");
-				scanf("%d", &base);	
-			}	while(base < 2 || base > 16 || base == 10);
+			base = ask_base();
 
 			printf("Enter number to convert from base %d: ", base);
-			scanf("%s", snumber);
+			scanf("%s", snumber1);
 
-			to_decimal(snumber, base);
+			to_decimal(snumber1, base);
 			break;
 
 		case 3:
