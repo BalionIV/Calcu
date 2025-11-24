@@ -68,6 +68,45 @@ void to_decimal(char *sn, int base) {
 	printf("Number in decimal: %d\n", n);
 }
 
+void other_addition(char *sn1, char *sn2, char *res, int base) {
+    int ret, high, rint;
+
+    if(!check_base(sn1, base)) return;
+    if(!check_base(sn2, base)) return;
+    if(strlen(sn1) >= strlen(sn2)) high = strlen(sn1);
+    else high = strlen(sn2);
+
+    for(int i = 0; i < high; i++) { 
+        ret = 0;
+        if((sn1[i] >= 'A') && (sn2[i] >= 'A')) {
+            rint = sn1[i] + sn2[i] - (2 * 'A') + 20 + ret;
+            printf("%d", rint);
+            if(rint >= base) {
+                ret = 1;
+                rint -= base;
+            }
+            printf("%d", rint);
+        }
+        else if((sn1[i] >= 'A') || (sn2[i] >= 'A')) {
+            rint = sn1[i] + sn2[i] - 'A' + 10 + ret;
+            if(rint >= base) {
+                ret = 1;
+                rint -= base;
+            }
+        }
+        else {
+            rint = sn1[i] + sn2[i] - (2 * '0') + ret;
+            if(rint >= base) {
+                ret = 1;
+                rint -= base;
+            }
+        }
+
+        if(rint >= 10) res[i] = rint + 'A' - 10;
+        else res[i] = rint + '0';
+    }
+}
+
 int main() {
 
 	int number, base, option;
@@ -97,9 +136,18 @@ int main() {
 			break;
 
 		case 3:
+            base = ask_base();
+
+            printf("Enter the numbers: ");
+            scanf("%s %s", snumber1, snumber2);
+
+            other_addition(snumber1, snumber2, resultat, base);
+            printf("Result: %s\n", resultat);
 			break;
 
-		
+		case 4:
+			break;
+			
 		default:
 			printf("Please choose only from the options below: \n");
 			printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Exit.\n");
@@ -107,7 +155,7 @@ int main() {
 			break;
 
 		}
-	} while(option != 3);
+	} while(option != 4);
 
 	return 0;
 }
