@@ -26,6 +26,26 @@ int ask_base() {
 	return base;
 } 
 
+int check_size(char *sn1, char *sn2) {
+	int high, dif;
+
+	if(strlen(sn1) > strlen(sn2)) {
+    	high = strlen(sn1);
+    	dif = strlen(sn1) - strlen(sn2);
+    	memmove(sn2 + dif, sn2, strlen(sn2) + 1);
+    	for(int i = 0; i < dif; i++) sn2[i] = '0';
+    }
+    else if(strlen(sn2) > strlen(sn1)) {
+    	high = strlen(sn2);
+    	dif = strlen(sn1) - strlen(sn2);
+    	memmove(sn1 + dif, sn1, strlen(sn2) + 1);
+    	for(int i = 0; i < dif; i++) sn1[i] = '0';
+    }
+	else high = strlen(sn1);
+
+	return high;
+}
+
 void from_decimal(int n, int base) {
 	int f = n, cpt = 0;
 	char converted[256];
@@ -56,60 +76,49 @@ void to_decimal(char *sn, int base) {
 
 	int n = 0, c = strlen(sn) - 1;
 
-	if(!check_base(sn, base)) {
-			return;
-	}
+	if(!check_base(sn, base)) return;
 
 	for(int i = 0; i < strlen(sn); i++) {
 		if(sn[i] >= 'A') n += (sn[i] - 'A' + 10) * pow(base, c);
 		else n += (sn[i] - '0') * pow(base, c);
+		c--;
 	}
 
 	printf("Number in decimal: %d\n", n);
 }
 
 void other_addition(char *sn1, char *sn2, char *res, int base) {
-    int ret = 0, high, dif = strlen(sn1) - strlen(sn2), rint;
+    int carry = 0, high, rint;
 
     if(!check_base(sn1, base)) return;
     if(!check_base(sn2, base)) return;
 
-    if(strlen(sn1) > strlen(sn2)) {
-    	high = strlen(sn1);
-    	memmove(sn2 + dif, sn2, strlen(sn2) + 1);
-    	for(int i = 0; i < dif; i++) {printf("a");sn2[i] = '0';}
-    }
-    else if(strlen(sn2) > strlen(sn1)) {
-    	high = strlen(sn2);
-    	memmove(sn1 + dif, sn1, strlen(sn2) + 1);
-    	for(int i = 0; i < dif; i++) sn1[i] = '0';
-    }
-	else high = strlen(sn1);
+    high = check_size(sn1, sn2);
     
     res[high] = '\0';
 
     for(int i = high - 1; i >= 0; i--) { 
         if((sn1[i] >= 'A') && (sn2[i] >= 'A')) {
-            rint = sn1[i] + sn2[i] - (2 * 'A') + 20 + ret;
-            ret = 0;
+            rint = sn1[i] + sn2[i] - 2 * 'A' + 20 + carry;
+            carry = 0;
             if(rint >= base) {
-                ret = 1;
+                carry = 1;
                 rint -= base;
             }
         }
         else if((sn1[i] >= 'A') || (sn2[i] >= 'A')) {
-            rint = sn1[i] + sn2[i] - 'A' - '0' + 10 + ret;
-            ret = 0;
+            rint = sn1[i] + sn2[i] - 'A' - '0' + 10 + carry;
+            carry = 0;
             if(rint >= base) {
-                ret = 1;
+                carry = 1;
                 rint -= base;
             }
         }
         else {
-            rint = sn1[i] + sn2[i] - (2 * '0') + ret;
-            ret = 0;
+            rint = sn1[i] + sn2[i] - 2 * '0' + carry;
+            carry = 0;
             if(rint >= base) {
-                ret = 1;
+                carry = 1;
                 rint -= base;
             }
         }
@@ -117,10 +126,62 @@ void other_addition(char *sn1, char *sn2, char *res, int base) {
         if(rint >= 10) res[i] = rint + 'A' - 10;
         else res[i] = rint + '0';
 
-        if(i == 0 && ret == 1) {
+        if(i == 0 && carry == 1) {
         	memmove(res + 1, res, high + 1);
     		res[0] = '1';
     	}
+    }
+}
+
+void other_subtraction(char *sn1, char *sn2, char *res, int base) {
+	int carry = 0, high, rint;
+
+    if(!check_base(sn1, base)) return;
+    if(!check_base(sn2, base)) return;
+
+    high = check_size(sn1, sn2);
+    res[high] = '\0';
+
+    for(int i = high - 1; i >= 0; i--) {
+    	if(sn1[i] >= sn2[i] + carry) {
+    		if((sn1[i] >= 'A') && (sn2[i] >= 'A')) {
+    			printf("a");
+    			rint = sn1[i] - (sn2[i] + carry) + 20;
+    		}
+    		else if((sn1[i] >= 'A') || (sn2[i] >= 'A')) {
+    			rint = sn1[i] - (sn2[i] + carry) - 7;
+        		printf("b");
+        	}
+        	else {
+        		printf("%d %d %d\n", sn1[i], sn2[i], carry);
+        		rint = sn1[i] - (sn2[i] + carry);
+        		printf("c");
+        	}
+        	carry = 0;
+        }
+        else {
+        	if((sn1[i] >= 'A') && (sn2[i] >= 'A')) {
+        		rint = sn1[i] + base - (sn2[i] + carry) + 20;
+        		printf("d");
+        	}
+        	else if((sn1[i] >= 'A') || (sn2[i] >= 'A')) {
+        		rint = sn1[i] + base - (sn2[i] + carry) - 7;
+        		printf("e");
+        	}
+        	else {
+        		rint = sn1[i] + base - (sn2[i] + carry);
+        		printf("f");
+        	}
+        	carry = 1;
+        }
+
+        if(rint >= 10) res[i] = rint - 10 + 'A';
+        else res[i] = rint + '0';
+
+        if(carry == 1 && i == 0) {
+        	memmove(res + 1, res, high + 1);
+        	res[0] = '-';
+        }
     }
 }
 
@@ -130,7 +191,7 @@ int main() {
 	char snumber1[256], snumber2[256], resultat[256];
 
 	do {
-		printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal. \n3- Addition in any base. \n4- Exit.\n");
+		printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Addition in any base.\n4- Subtraction in any base.\n5- Exit.\n");
 		scanf("%d", &option);		
 
 		switch(option) {
@@ -163,16 +224,26 @@ int main() {
 			break;
 
 		case 4:
+			base = ask_base();
+
+			printf("Enter the numbers: ");
+			scanf("%s %s", snumber1, snumber2);
+
+			other_subtraction(snumber1, snumber2, resultat, base);
+			printf("Result: %s\n", resultat);
+			break;
+
+		case 5:
 			break;
 			
 		default:
 			printf("Please choose only from the options below: \n");
-			printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal. \n3- Addition in any base. \n4- Exit.\n");
+			printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Addition in any base.\n4- Subtraction in any base.\n5- Exit.\n");
 			scanf("%d", &option);
 			break;
 
 		}
-	} while(option != 4);
+	} while(option != 5);
 
 	return 0;
 }
