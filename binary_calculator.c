@@ -3,6 +3,14 @@
 #include <math.h>
 #include <stdbool.h>
 
+// Je sais qu'il n'est pas nécessaire d'effectuer toutes ces opérations arithmétiques dans leur bases d'origines. 
+// Je peux simplement les convertir en décimal puis faire une opération avec des entiers (int)
+// Mais je préfére celle ci pour apprendre a résoudre des problémes de manière efficace.
+
+// I know that is not necessary to do all the arithmetic operations in their original bases.
+// I could simply convert them to decimal then do them normally using integers
+// But I prefer using this way to learn to solve problems effictively
+
 bool check_base(char *sn, int base) {
 
 	for(int i = 0; i < strlen(sn); i++) {
@@ -86,7 +94,7 @@ void to_decimal(char *sn, int base) {
 	printf("Number in decimal: %d\n", n);
 }
 
-int maximum(char *sn1, char *sn2, int base) {
+int comparison(char *sn1, char *sn2, int base) {
 	if(!check_base(sn1, base)) return -1;
 	if(!check_base(sn2, base)) return -1;
 
@@ -153,7 +161,7 @@ void other_subtraction(char *sn1, char *sn2, char *res, int base) {
     if(!check_base(sn1, base)) return;
     if(!check_base(sn2, base)) return;
 
-    max = maximum(sn1, sn2, base);
+    max = comparison(sn1, sn2, base);
     high = check_size(sn1, sn2);
     res[high] = '\0';
 
@@ -210,7 +218,7 @@ int main() {
 	char snumber1[256], snumber2[256], resultat[256];
 
 	do {
-		printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Maximum of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n6- Exit.\n");
+		printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Comparison of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n6- Exit.\n");
 		scanf("%d", &option);		
 
 		switch(option) {
@@ -231,15 +239,16 @@ int main() {
 
 			to_decimal(snumber1, base);
 			break;
+
 		case 3:
 			base = ask_base();
 
-			printf("Enter the numbers: ");
+			printf("Enter the numbers to compare: ");
 			scanf("%s %s", snumber1, snumber2);
-			int max = maximum(snumber1, snumber2, base);
+			int max = comparison(snumber1, snumber2, base);
 
-			if(max == 1) printf("%s is bigger.\n", snumber1);
-			else if(max == 0) printf("%s is bigger.\n", snumber2);
+			if(max == 1) printf("%s is bigger than %s.\n", snumber1, snumber2);
+			else if(max == 0) printf("%s is bigger %s.\n", snumber2, snumber1);
 			else if(max == 2) printf("They are equal.\n");
 			break;
 
@@ -268,7 +277,7 @@ int main() {
 			
 		default:
 			printf("Please choose only from the options below: \n");
-			printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Maximum of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n6- Exit.\n");
+			printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Comparison of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n6- Exit.\n");
 			scanf("%d", &option);
 			break;
 
