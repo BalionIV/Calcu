@@ -213,12 +213,39 @@ void other_subtraction(char *sn1, char *sn2, char *res, int base) {
      	}
 }
 
+void other_multiplication(char *sn1, char *sn2, char *res, int base) {
+	int carry = 0, high, rint, digit, cpt;
+	char add[256];
+
+    if(!check_base(sn1, base)) return;
+    if(!check_base(sn2, base)) return;	
+
+    for(int i = strlen(sn2); i >= 0; i--) {
+    	cpt = strlen(sn1) + i;
+    	for(int j = strlen(sn1); j >= 0; j--) {
+    		if((sn1[i] >= 'A') && (sn2[i] >= 'A')) rint = (sn1[i] - 'A' + 10) * (sn2[i] - 'A' + 10) + carry;
+    		else if(sn1[i] >= 'A') rint = (sn1[i] - 'A' + 10) * (sn2[i] - '0') + carry;
+    		else if(sn2[i] >= 'A') rint = (sn1[i] - '0') * (sn2[i] - 'A' + 10) + carry;
+    		else rint = (sn1[i] - '0') * (sn2[i] - '0') + carry; 
+
+    		digit = rint % base;
+    		if(digit >= 10) add[cpt] = digit - 10 + 'A';
+    		else add[cpt] = digit + '0';
+
+    		if(rint >= base) carry = rint / base;  
+    		else carry = 0;
+    		cpt--;
+    	}
+    }
+}
+
 int main() {
 	int number, base, option;
 	char snumber1[256], snumber2[256], resultat[256];
 
 	do {
-		printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Comparison of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n6- Exit.\n");
+		printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Comparison of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n");
+		printf("6- Multiplication in any base.\n 7- Exit.\n");
 		scanf("%d", &option);		
 
 		switch(option) {
@@ -273,11 +300,22 @@ int main() {
 			break;
 
 		case 6:
+			base = ask_base();
+
+			printf("Enter the numbers: ");
+			scanf("%s %s", snumber1, snumber2);
+
+			other_multiplication(snumber1, snumber2, resultat, base);
+			printf("Result: %s\n", resultat);
+			break;
+
+		case 7:
 			break;
 			
 		default:
 			printf("Please choose only from the options below: \n");
-			printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Comparison of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n6- Exit.\n");
+			printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Comparison of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n");
+			printf("6- Multiplication in any base.\n 7- Exit.\n");			
 			scanf("%d", &option);
 			break;
 
