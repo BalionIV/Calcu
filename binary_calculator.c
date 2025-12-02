@@ -11,10 +11,12 @@
 // I could simply convert them to decimal then do them normally using integers
 // But I prefer using this way to learn to solve problems effictively
 
+
+// It checks whether the number is actually in the base given.
 bool check_base(char *sn, int base) {
 
 	for(int i = 0; i < strlen(sn); i++) {
-		if(((sn[i] >= 'A') &&  (sn[i] - 'A' + 10 >= base)) || ((sn[i] <= '9') && (sn[i] - '0' >= base))) {
+		if(((sn[i] >= 'A') &&  (sn[i] - 'A' + 10 >= base)) || ((sn[i] <= '9') && (sn[i] - '0' >= base) && (sn[i] - '0' >= 0))) {
 			printf("Base incorrect.\n");
 			return 0;
 		}
@@ -23,6 +25,7 @@ bool check_base(char *sn, int base) {
 	return 1;
 }
 
+// It asks the user for the base.
 int ask_base() {
 	int base;
 
@@ -34,6 +37,7 @@ int ask_base() {
 	return base;
 } 
 
+// It checks the size of each number and adds 0 so they become of the same length.
 int check_size(char *sn1, char *sn2) {
 	int high, dif;
 
@@ -54,6 +58,7 @@ int check_size(char *sn1, char *sn2) {
 	return high;
 }
 
+// It converts from decimal to any base.
 void from_decimal(int n, int base) {
 	int f = n, cpt = 0;
 	char converted[256];
@@ -80,6 +85,7 @@ void from_decimal(int n, int base) {
 	printf("Number converted to base %d: %s\n", base, converted);
 }
 
+// It converts from any base to decimal.
 void to_decimal(char *sn, int base) {
 	int n = 0, c = strlen(sn) - 1;
 
@@ -94,6 +100,7 @@ void to_decimal(char *sn, int base) {
 	printf("Number in decimal: %d\n", n);
 }
 
+// It compares between two numbers of any given base.
 int comparison(char *sn1, char *sn2, int base) {
 	if(!check_base(sn1, base)) return -1;
 	if(!check_base(sn2, base)) return -1;
@@ -109,11 +116,18 @@ int comparison(char *sn1, char *sn2, int base) {
 	return 2;
 }
 
+// It adds two numbers of any given base.
 void other_addition(char *sn1, char *sn2, char *res, int base) {
     int carry = 0, size, rint;
 
-    if(!check_base(sn1, base)) return;
-    if(!check_base(sn2, base)) return;
+    if(!check_base(sn1, base)) {
+    	strcpy(res, "NULL\0");
+    	return;
+    }
+    if(!check_base(sn2, base)) {
+    	strcpy(res, "NULL\0");
+    	return;
+    }
 
     size = check_size(sn1, sn2);
     
@@ -155,11 +169,18 @@ void other_addition(char *sn1, char *sn2, char *res, int base) {
     }
 }
 
+// It subtracts two numbers of any given base.
 void other_subtraction(char *sn1, char *sn2, char *res, int base) {
 	int carry = 0, size, rint, max;
 
-    if(!check_base(sn1, base)) return;
-    if(!check_base(sn2, base)) return;
+    if(!check_base(sn1, base)) {
+    	strcpy(res, "NULL\0");
+    	return;
+    }
+    if(!check_base(sn2, base)) {
+    	strcpy(res, "NULL\0");
+    	return;
+    }
 
     max = comparison(sn1, sn2, base);
     size = check_size(sn1, sn2);
@@ -213,12 +234,19 @@ void other_subtraction(char *sn1, char *sn2, char *res, int base) {
      	}
 }
 
+// It multiplies two numbers of any given base.
 void other_multiplication(char *sn1, char *sn2, char *res, int base) {
 	int carry = 0, garbage, size, f = 0, rint, digit;
 	char add[256], temp[256];
 
-    if(!check_base(sn1, base)) return;
-    if(!check_base(sn2, base)) return;
+	if(!check_base(sn1, base)) {
+		strcpy(res, "NULL\0");
+		return;
+	}
+	if(!check_base(sn2, base)) {
+		strcpy(res, "NULL\0");
+		return;
+	}
 
     strcpy(temp, "0\0");
 
@@ -233,7 +261,7 @@ void other_multiplication(char *sn1, char *sn2, char *res, int base) {
     		else if(sn1[j] >= 'A') rint = (sn1[j] - 'A' + 10) * (sn2[i] - '0') + carry;
     		else if(sn2[i] >= 'A') rint = (sn1[j] - '0') * (sn2[i] - 'A' + 10) + carry;
     		else rint = (sn1[j] - '0') * (sn2[i] - '0') + carry;
-
+    		
     		digit = rint % - base;
     		if(digit >= 10) add[j] = digit - 10 + 'A';
     		else add[j] = digit + '0';
@@ -250,10 +278,11 @@ void other_multiplication(char *sn1, char *sn2, char *res, int base) {
     		if(carry >= 10) add[0] = carry - 10 + 'A';
     		else add[0] = carry + '0';
     	}
-
     	carry = 0;
 
     	other_addition(temp, add, res, base);
+    	if(strcmp(res, "NULL")) return;
+
      	strcpy(temp, res);
     }
 }
