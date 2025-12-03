@@ -58,6 +58,30 @@ int check_size(char *sn1, char *sn2) {
 	return high;
 }
 
+// It deletes zeros from the left.
+void delete_zeros(char *sn) {
+	int b = 0, c, p = 0;
+
+	for(int i = 0; i < strlen(sn); i++) 
+		if(sn[i] != '0' && sn[i] != '-') {
+			c = i;
+			break;
+		}
+
+	if(c == 0) return;
+
+	if(sn[0] == '-') b = 1;
+
+	for(int i = c - 1; i >= b; i--) {
+		p++;
+		for(int j = c; j < strlen(sn); j++) {
+			sn[j - p] = sn[j - p + 1];
+		}
+	}
+
+	sn[strlen(sn) - c] = '\0';
+}
+
 // It converts from decimal to any base.
 void from_decimal(int n, int base) {
 	int f = n, cpt = 0;
@@ -97,6 +121,7 @@ void to_decimal(char *sn, int base) {
 		c--;
 	}
 
+	delete_zeros(sn);
 	printf("Number in decimal: %d\n", n);
 }
 
@@ -232,6 +257,8 @@ void other_subtraction(char *sn1, char *sn2, char *res, int base) {
       			res[0] = '-';
       		}
      	}
+
+    delete_zeros(res);
 }
 
 // It multiplies two numbers of any given base.
@@ -285,6 +312,8 @@ void other_multiplication(char *sn1, char *sn2, char *res, int base) {
 
      	strcpy(temp, res);
     }
+
+    delete_zeros(res);
 }
 
 int main() {
