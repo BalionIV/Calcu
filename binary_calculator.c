@@ -37,7 +37,7 @@ int ask_base() {
 	return base;
 } 
 
-// It checks the size of each number and adds 0 so they become of the same length.
+// It checks the size of each number and adds 0 to the left so they become of the same length.
 int check_size(char *sn1, char *sn2) {
 	int high, dif;
 
@@ -62,11 +62,13 @@ int check_size(char *sn1, char *sn2) {
 void delete_zeros(char *sn) {
 	int b = 0, c, p = 0;
 
-	for(int i = 0; i < strlen(sn); i++) 
+	for(int i = 0; i < strlen(sn); i++) {
 		if(sn[i] != '0' && sn[i] != '-') {
 			c = i;
 			break;
 		}
+		if(i == strlen(sn) - 1) c = i;
+	}	
 
 	if(c == 0) return;
 
@@ -106,6 +108,7 @@ void from_decimal(int n, int base) {
 		n /= base;
 	}
 
+	delete_zeros(converted);
 	printf("Number converted to base %d: %s\n", base, converted);
 }
 
@@ -192,6 +195,8 @@ void other_addition(char *sn1, char *sn2, char *res, int base) {
     		res[0] = '1';
     	}
     }
+
+    delete_zeros(res);
 }
 
 // It subtracts two numbers of any given base.
