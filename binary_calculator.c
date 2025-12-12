@@ -217,8 +217,7 @@ void other_subtraction(char *sn1, char *sn2, char *res, int base) {
     res[size] = '\0';
 
     if(max == 2) {
-    	res[0] = '0';
-    	res[1] = '\0';
+    	strcpy(res, "0\0");
     	return;
     }
 
@@ -321,13 +320,41 @@ void other_multiplication(char *sn1, char *sn2, char *res, int base) {
     delete_zeros(res);
 }
 
+
+// It divides snumber1 on snumber2 in any given base.
+void other_division(char *sn1, char *sn2, char *result, char *rest, int base) {
+	int carry = 0, rint, size;
+
+	if(!check_base(sn1, base)) {
+		strcpy(result, "NULL\0");
+		strcpy(rest, "NULL\0");
+		return;
+	}
+	if(!check_base(sn2, base)) {
+		strcpy(result, "NULL\0");
+		strcpy(rest, "NULL\0");
+		return;
+	}
+
+	delete_zeros(sn2);
+	if(strcmp(sn2, "0")) {
+		strcpy(result, "NULL\0");
+		strcpy(rest, "NULL\0");
+		return;		
+	}
+
+	size = check_size(sn1, sn2);
+
+		
+}
+
 int main() {
 	int number, base, option;
-	char snumber1[256], snumber2[256], resultat[256];
+	char snumber1[256], snumber2[256], resultat[256], rest[256];
 
 	do {
 		printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Comparison of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n");
-		printf("6- Multiplication in any base.\n7- Exit.\n");
+		printf("6- Multiplication in any base.\n7- Euclidean division in any base.\n8- Exit.\n");
 		scanf("%d", &option);		
 
 		switch(option) {
@@ -392,17 +419,27 @@ int main() {
 			break;
 
 		case 7:
+			base = ask_base();
+			printf("Enter the numbers: ");
+			scanf("%s %s", snumber1, snumber2);
+
+			other_division(snumber1, snumber2, resultat, rest, base);
+			printf("Result: %s\n", resultat);
+			printf("Rest: %s\n", rest);
+			break;
+
+		case 8:
 			break;
 			
 		default:
 			printf("Please choose only from the options below: \n");
 			printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Comparison of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n");
-			printf("6- Multiplication in any base.\n7- Exit.\n");			
+			printf("6- Multiplication in any base.\n7- Euclidean division in any base.\n8- Exit.\n");			
 			scanf("%d", &option);
 			break;
 
 		}
-	} while(option != 7);
+	} while(option != 8);
 
 	return 0;
 }
