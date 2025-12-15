@@ -12,7 +12,7 @@
 // But I prefer using this way to learn to solve problems effictively
 
 
-// It checks whether the number is actually in the base given.
+// It checks whether the number is actually in the given base.
 bool check_base(char *sn, int base) {
 
 	for(int i = 0; i < strlen(sn); i++) {
@@ -323,7 +323,8 @@ void other_multiplication(char *sn1, char *sn2, char *res, int base) {
 
 // It divides snumber1 on snumber2 in any given base.
 void other_division(char *sn1, char *sn2, char *result, char *rest, int base) {
-	int carry = 0, rint, size;
+	int carry = 0, rint, size, cmp;
+	char string[256], increment[256], test[256];
 
 	if(!check_base(sn1, base)) {
 		strcpy(result, "NULL\0");
@@ -342,10 +343,17 @@ void other_division(char *sn1, char *sn2, char *result, char *rest, int base) {
 		strcpy(rest, "NULL\0");
 		return;		
 	}
-
-	size = check_size(sn1, sn2);
-
-		
+	/*
+	while(1) {
+		strcpy(increment, "1\0");
+		for(int i = 0; i < strlen(sn1); i++) {
+			string[i] = sn1[i];
+			cmp = comparison(string, sn2, base);
+			if(cmp == 1) do {
+				other_addition(increment, "1", increment, base);
+			}
+		}
+	}*/
 }
 
 int main() {
