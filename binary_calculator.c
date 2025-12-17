@@ -2,6 +2,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdbool.h>
+#define a_size 256
 
 // Je sais qu'il n'est pas nécessaire d'effectuer toutes ces opérations arithmétiques dans leur bases d'origines. 
 // Je peux simplement les convertir en décimal puis faire une opération avec des entiers (int)
@@ -87,7 +88,7 @@ void delete_zeros(char *sn) {
 // It converts from decimal to any base.
 void from_decimal(int n, int base) {
 	int f = n, cpt = 0;
-	char converted[256];
+	char converted[a_size];
 
 	while(f >= 1) {
 		f /= base;
@@ -268,7 +269,7 @@ void other_subtraction(char *sn1, char *sn2, char *res, int base) {
 // It multiplies two numbers of any given base.
 void other_multiplication(char *sn1, char *sn2, char *res, int base) {
 	int carry = 0, garbage, size, f = 0, rint, digit;
-	char add[256], temp[256];
+	char add[a_size], temp[a_size];
 
 	if(!check_base(sn1, base)) {
 		strcpy(res, "NULL\0");
@@ -293,7 +294,7 @@ void other_multiplication(char *sn1, char *sn2, char *res, int base) {
     		else if(sn2[i] >= 'A') rint = (sn1[j] - '0') * (sn2[i] - 'A' + 10) + carry;
     		else rint = (sn1[j] - '0') * (sn2[i] - '0') + carry;
     		
-    		digit = rint % - base;
+    		digit = rint % base;
     		if(digit >= 10) add[j] = digit - 10 + 'A';
     		else add[j] = digit + '0';
 
@@ -312,7 +313,7 @@ void other_multiplication(char *sn1, char *sn2, char *res, int base) {
     	carry = 0;
 
     	other_addition(temp, add, res, base);
-    	if(strcmp(res, "NULL")) return;
+    	if(!strcmp(res, "NULL")) return;
 
      	strcpy(temp, res);
     }
@@ -323,8 +324,9 @@ void other_multiplication(char *sn1, char *sn2, char *res, int base) {
 
 // It divides snumber1 on snumber2 in any given base.
 void other_division(char *sn1, char *sn2, char *result, char *rest, int base) {
-	int carry = 0, rint, size, cmp;
-	char string[256], increment[256], test[256];
+	int carry = 0, rint, size;
+	char add[a_size], increment[a_size];
+	strcpy(increment, "0\0");
 
 	if(!check_base(sn1, base)) {
 		strcpy(result, "NULL\0");
@@ -338,27 +340,33 @@ void other_division(char *sn1, char *sn2, char *result, char *rest, int base) {
 	}
 
 	delete_zeros(sn2);
-	if(strcmp(sn2, "0")) {
+	if(!strcmp(sn2, "0")) {
 		strcpy(result, "NULL\0");
 		strcpy(rest, "NULL\0");
 		return;		
 	}
-	/*
+	
+	if(comparison(sn1, sn2, base) == 0) {
+		strcpy(result, "0\0");
+		strcpy(rest, sn1);
+		return;
+	}
+
 	while(1) {
-		strcpy(increment, "1\0");
-		for(int i = 0; i < strlen(sn1); i++) {
-			string[i] = sn1[i];
-			cmp = comparison(string, sn2, base);
-			if(cmp == 1) do {
-				other_addition(increment, "1", increment, base);
-			}
+		other_addition(increment, "1", increment, base);
+		other_multiplication(sn2, increment, add, base);
+		if(comparison(sn1, add, base) == 2 || comparison(sn1, add, base) == 0) {
+			other_subtraction(increment, "1", result, base);
+			other_multiplication(sn2, result, add, base);
+			other_subtraction(sn1, add, rest, base);
+			break;
 		}
-	}*/
+	}
 }
 
 int main() {
 	int number, base, option;
-	char snumber1[256], snumber2[256], resultat[256], rest[256];
+	char snumber1[a_size], snumber2[a_size], resultat[a_size], rest[a_size];
 
 	do {
 		printf("Choices:\n1- Convert from decimal.\n2- Convert to decimal.\n3- Comparison of two numbers.\n4- Addition in any base.\n5- Subtraction in any base.\n");
